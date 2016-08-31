@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
-
+use app\models\User;
 /**
  * LoginForm is the model behind the login form.
  *
@@ -19,7 +19,6 @@ class LoginForm extends Model
     public $verifyCode;
     private $_user = false;
 
-
     /**
      * @return array the validation rules.
      */
@@ -27,12 +26,23 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['username', 'password'], 'required'],
+            [['username', 'password','verifyCode'], 'required'],
+          //  ['username','validateAccount','skipOnEmpty' => false],
+            ['verifyCode','captcha','captchaAction'=>'admin/login/captcha','message'=>'验证码错误'],
             // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
+            //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
+    }
+
+
+    public function validateAccount($attribute,$params){
+        if (!preg_match('/^\w(2,30)&/',$this->$attribute)){
+            $this->addError($attribute,'账号或密码错误');
+        }elseif (strlen($this->password) < 6){
+            $this->addError($attribute,'账号或密码错误');
+        }
     }
 
     /**
@@ -46,9 +56,8 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, '密码或用户名错误.');
             }
         }
     }

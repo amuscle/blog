@@ -3,7 +3,6 @@ namespace app\modules\common\controllers;
 
 use Yii;
 use yii\web\Controller;
-use app\models\User;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,17 +18,9 @@ use app\models\User;
 class BaseAdminController extends Controller{
     //put your code here
     
-    public function init() {
-        parent::init();
-        
-    }
-    public function beforeAction($action) {
-      //  parent::beforeAction($action);
-    }
-
     public function goAdminHome()
     {
-	return Yii::$app->getResponse()->redirect(['admin/index']);
+	    return Yii::$app->getResponse()->redirect(['admin/index']);
     }
     
 }

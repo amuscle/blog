@@ -8,12 +8,11 @@
 
 namespace app\modules\admin\controllers;
 
+use yii;
 use app\models\LoginForm;
-use yii\web\Controller;
-
-class LoginController extends Controller
+use app\modules\common\controllers\BaseAdminController;
+class LoginController extends BaseAdminController
 {
-
     function actions()
     {
         return [
@@ -23,19 +22,19 @@ class LoginController extends Controller
                 'width'  => '91',
                 'minLength' => 4,
                 'maxLength' => 4,
-                'template' => '{image}',
-                'options' => [
-                    'calss' => 'J_codeimg',
-                ],
             ]
         ];
-
     }
 
     function actionIndex(){
-
+        if (!Yii::$app->user->isGuest){
+            return $this->goAdminHome();
+        }
         $model = new LoginForm();
-
-        return $this->renderPartial('index',['model' => $model]);
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goAdminHome();
+        }else{
+            return $this->renderPartial('index',['model' => $model]);
+        }
     }
 }
