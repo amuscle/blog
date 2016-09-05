@@ -8,6 +8,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\SignupForm;
 use yii;
 use app\models\LoginForm;
 use app\modules\common\controllers\BaseAdminController;
@@ -36,5 +37,17 @@ class LoginController extends BaseAdminController
         }else{
             return $this->renderPartial('index',['model' => $model]);
         }
+    }
+
+    function actionSignup(){
+        $model = new SignupForm();
+        if ($model->load(yii::$app->request->post())){
+            if($user = $model->signup()){
+                if(yii::$app->getUser()->login($user)){
+                    return $this->goAdminHome();
+                }
+            }
+        }
+        return $this->render('signup',['model'=>$model]);
     }
 }
